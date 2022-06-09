@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Construction fine calculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            padding-top: 40px;
+            padding-bottom: 40px;
+            background-color: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+<main class="w-100 m-auto text-center">
+    <h1 class="display-1"><span class="fine font-monospace">0</span></h1>
+</main>
+
+<div class="modal fade" id="modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+            </div>
+            <form class="modal-body row form needs-validation">
+                <div class="col-4">
+                    <label class="form-label small text-muted text-uppercase fw-bold" style="font-size: 66%">Price of contract</label>
+                    <div class="input-group mb-3">
+                        <input type="number" class="form-control" id="amount" placeholder="Price" required>
+                        <select class="form-select" id="currency">
+                            <option value="amd">AMD</option>
+                            <option value="usd">USD</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <label class="form-label small text-muted text-uppercase fw-bold" style="font-size: 66%">Percentage of fine</label>
+                    <div class="input-group mb-3">
+                        <input type="number" class="form-control" id="percent" placeholder="Fine %" min="0.01" step="0.01" max="0.1" required>
+                        <span class="input-group-text">%</span>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <label class="form-label small text-muted text-uppercase fw-bold" style="font-size: 66%">Contract end date</label>
+                    <input type="date" class="form-control" id="date" placeholder="Date" required>
+                </div>
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary calculate">Calculate</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+<script>
+    let modal
+    const showModal = (modal) => {
+        modal.show()
+    }
+    const closeModal = (modal) => {
+        const form = document.querySelector('.needs-validation')
+
+        if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+        }
+
+        form.classList.add('was-validated')
+        if (!document.querySelector('.form').checkValidity()) return
+
+        localStorage.setItem('pref', JSON.stringify({
+            amount: document.querySelector('#amount').value,
+            currency: document.querySelector('#currency').value,
+            percent: document.querySelector('#percent').value,
+            date: document.querySelector('#date').value
+        }))
+        calculate()
+
+        modal.hide()
+    }
+    const calculate = () => {
+
+        setInterval(() => {
+            const pref = JSON.parse(localStorage.getItem('pref'))
+            const amount = pref.amount
+            const currency = pref.currency
+            const percent = pref.percent
+            const date = pref.date
+
+            const dateDiff = (Date.now() - (new Date(date)).getTime()) / 1000
+            const pricePerSec = amount * percent / 100 / 24 / 60 / 60
+
+            var formatter = new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: currency,
+            });
+
+            document.querySelector('.fine').innerText = formatter.format(dateDiff * pricePerSec)
+        }, 10)
+
+        console.log(dateDiff / 60 / 60 / 24, pricePerSec, dateDiff * pricePerSec, currency)
+        //
+        // console.log(pref)
+    }
+
+    window.addEventListener('DOMContentLoaded', (event) => {
+        const pref = localStorage.getItem('pref')
+        modal = new bootstrap.Modal('#modal')
+
+        if (!pref) {
+            showModal(modal)
+        } else {
+            calculate()
+        }
+    })
+
+    document.querySelector('.calculate').addEventListener('click', (event) => {
+        closeModal(modal)
+    })
+</script>
+</body>
+</html>
