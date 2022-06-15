@@ -28,16 +28,30 @@
             padding-bottom: 40px;
             background-color: #f5f5f5;
         }
+
+        .questionmark {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            text-align: center;
+            background: #000;
+            color: #fff;
+            border-radius: 50%;
+            font-weight: normal !important;
+        }
     </style>
 </head>
 <body>
 <main class="w-100 m-auto text-center">
-    <h1 class="display-1"><span class="fine font-monospace">0</span></h1>
-    <div class="d-flex justify-content-between font-monospace m-auto config-display d-none" style="width: 500px">
+    <h1 class="display-4"><span class="fine font-monospace">0</span></h1>
+    <div class="d-flex flex-column flex-md-row justify-content-between font-monospace m-auto lead config-display d-none" style="max-width: 500px">
         <div class="mt-1 static-amount">-</div>
         <div class="mt-1 static-percent">-</div>
         <div class="mt-1 static-date">-</div>
-        <button class="btn btn-sm btn-light config">☰</button>
+        <button class="btn btn-sm btn-light m-3 m-md-0 config">
+            <span class="d-none d-md-inline">☰</span>
+            <span class="d-md-none text-uppercase">Change Settings</span>
+        </button>
     </div>
 </main>
 
@@ -48,8 +62,11 @@
                 <h5 class="modal-title" id="staticBackdropLabel">Contract details</h5>
             </div>
             <form class="modal-body row form needs-validation">
-                <div class="col-5">
-                    <label class="form-label small text-muted text-uppercase fw-bold" style="font-size: 66%">Price of contract</label>
+                <div class="col-12 col-lg-5">
+                    <label class="form-label small text-muted text-uppercase fw-bold" style="font-size: 66%">
+                        Price of contract
+                        <span class="questionmark" role="button" data-bs-toggle="tooltip" title="Total amount of the contract (house full price)">?</span>
+                    </label>
                     <div class="input-group mb-3">
                         <input type="number" class="form-control" id="amount" placeholder="Price" min="0" step="1000" style="width: 50%" required>
                         <select class="form-select" id="currency">
@@ -58,15 +75,21 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-3">
-                    <label class="form-label small text-muted text-uppercase fw-bold" style="font-size: 66%">Percentage of fine</label>
+                <div class="col-12 col-lg-3">
+                    <label class="form-label small text-muted text-uppercase fw-bold" style="font-size: 66%">
+                        Percentage of fine
+                        <span class="questionmark" role="button" data-bs-toggle="tooltip" title="Fine percentage mentioned in the contract per delayed day">?</span>
+                    </label>
                     <div class="input-group mb-3">
                         <input type="number" class="form-control" id="percent" placeholder="Fine %" min="0.01" step="0.01" max="100" required>
                         <span class="input-group-text">%</span>
                     </div>
                 </div>
-                <div class="col-4">
-                    <label class="form-label small text-muted text-uppercase fw-bold" style="font-size: 66%">Contract end date</label>
+                <div class="col-12 col-lg-4">
+                    <label class="form-label small text-muted text-uppercase fw-bold" style="font-size: 66%">
+                        Contract end date
+                        <span class="questionmark" role="button" data-bs-toggle="tooltip" title="Final date of the contract to be completed">?</span>
+                    </label>
                     <input type="date" class="form-control" id="date" placeholder="Date" required>
                 </div>
             </form>
@@ -165,6 +188,9 @@
     document.querySelector('.config').addEventListener('click', (event) => {
         showModal(modal)
     })
+
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 </script>
 </body>
 </html>
